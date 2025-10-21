@@ -34,28 +34,32 @@ app.use('/auth', createProxyMiddleware({
   pathRewrite: { '^/auth': '' } // forwards /auth/register → /register
 }));
 
+// Forward club requests without stripping the base path
 app.use('/club', authToken, authRole('club_leader'), createProxyMiddleware({
   target: 'http://localhost:5002',
   changeOrigin: true,
-  pathRewrite: { '^/club': '' }
+  pathRewrite: { '^/club': '/club' }
 }));
 
+// Event service is mounted on `/events` so keep the pluralised path
 app.use('/event', authToken, authRole('club_leader'), createProxyMiddleware({
   target: 'http://localhost:5003',
   changeOrigin: true,
-  pathRewrite: { '^/event': '' }
+  pathRewrite: { '^/event': '/events' }
 }));
 
+// Budget service expects `/budgets`
 app.use('/budget', authToken, authRole('club_leader'), createProxyMiddleware({
   target: 'http://localhost:5004',
   changeOrigin: true,
-  pathRewrite: { '^/budget': '' }
+  pathRewrite: { '^/budget': '/budgets' }
 }));
 
+// Inventory service mounts its routes under `/inventory`
 app.use('/inventory', authToken, authRole('club_leader'), createProxyMiddleware({
   target: 'http://localhost:5005',
   changeOrigin: true,
-  pathRewrite: { '^/inventory': '' }
+  pathRewrite: { '^/inventory': '/inventory' }
 }));
 
 app.listen(4000, () => console.log("🚀 API Gateway running on port 4000"));
